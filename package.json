@@ -1,0 +1,26 @@
+{
+  "name": "korean-website-project",
+  "version": "1.0.0",
+  "description": "Big Bang Kpop",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && npm run minify",
+    "minify": "terser static/js/dist/main.js -o static/js/main.min.js --compress --mangle",
+    "format": "prettier --write \"src/**/*.ts\" \"static/css/**/*.css\" \"templates/**/*.html\"",
+    "lint": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "security-scan": "npm audit && snyk test",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "@types/three": "^0.178.1",
+    "prettier": "^3.6.2",
+    "snyk": "^1.1298.1",
+    "terser": "^5.43.1",
+    "typescript": "^5.8.3"
+  }
+}

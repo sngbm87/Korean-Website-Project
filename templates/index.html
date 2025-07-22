@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTS - 방탄소년단 공식 웹사이트</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+    <div id="three-container"></div>
+    
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/bts-logo.png') }}" alt="BTS 로고" class="logo">
+                <h1>방탄소년단</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">홈</a></li>
+                <li><a href="#members" class="nav-link">멤버</a></li>
+                <li><a href="#music" class="nav-link">음악</a></li>
+                <li><a href="#albums" class="nav-link">앨범</a></li>
+                <li><a href="#news" class="nav-link">뉴스</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <h2 class="hero-title">방탄소년단</h2>
+                <p class="hero-subtitle">전 세계를 사로잡은 K-POP의 아이콘</p>
+                <button class="cta-button" hx-get="/api/members" hx-target="#members-content" hx-trigger="click">
+                    멤버 보기
+                </button>
+            </div>
+            <div class="hero-video">
+                <video autoplay muted loop>
+                    <source src="{{ url_for('static', filename='videos/bts-hero.mp4') }}" type="video/mp4">
+                </video>
+            </div>
+        </section>
+
+        <section id="members" class="members-section">
+            <div class="container">
+                <h2 class="section-title">멤버</h2>
+                <div id="members-content" class="members-grid">
+                    <div class="loading">멤버 정보를 불러오는 중...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="music" class="music-section">
+            <div class="container">
+                <h2 class="section-title">음악</h2>
+                <div class="music-player">
+                    <div class="current-song">
+                        <img id="current-album-art" src="{{ url_for('static', filename='images/default-album.jpg') }}" alt="앨범 아트">
+                        <div class="song-info">
+                            <h3 id="current-song-title">곡을 선택해주세요</h3>
+                            <p id="current-artist">BTS</p>
+                        </div>
+                    </div>
+                    <div class="player-controls">
+                        <button id="prev-btn" class="control-btn">⏮</button>
+                        <button id="play-btn" class="control-btn play">▶</button>
+                        <button id="next-btn" class="control-btn">⏭</button>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                        <div class="time-info">
+                            <span id="current-time">0:00</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                    </div>
+                    <audio id="audio-player"></audio>
+                </div>
+                <div id="songs-content" class="songs-grid" 
+                     hx-get="/api/songs" 
+                     hx-trigger="load" 
+                     hx-target="this">
+                    <div class="loading">음악을 불러오는 중...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="albums" class="albums-section">
+            <div class="container">
+                <h2 class="section-title">앨범</h2>
+                <div id="albums-content" class="albums-grid"
+                     hx-get="/api/albums"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="loading">앨범을 불러오는 중...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="news" class="news-section">
+            <div class="container">
+                <h2 class="section-title">최신 뉴스</h2>
+                <div class="news-grid">
+                    <article class="news-item">
+                        <img src="{{ url_for('static', filename='images/news1.jpg') }}" alt="뉴스 이미지">
+                        <div class="news-content">
+                            <h3>BTS, 새로운 앨범 발표 예정</h3>
+                            <p>방탄소년단이 새로운 앨범으로 팬들과 만날 예정입니다...</p>
+                            <time>2024년 1월 15일</time>
+                        </div>
+                    </article>
+                    <article class="news-item">
+                        <img src="{{ url_for('static', filename='images/news2.jpg') }}" alt="뉴스 이미지">
+                        <div class="news-content">
+                            <h3>월드 투어 일정 공개</h3>
+                            <p>전 세계 팬들이 기다려온 월드 투어 일정이 공개되었습니다...</p>
+                            <time>2024년 1월 10일</time>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>방탄소년단</h3>
+                    <p>전 세계를 하나로 만드는 음악</p>
+                </div>
+                <div class="footer-section">
+                    <h3>링크</h3>
+                    <ul>
+                        <li><a href="#">공식 유튜브</a></li>
+                        <li><a href="#">트위터</a></li>
+                        <li><a href="#">인스타그램</a></li>
+                        <li><a href="#">위버스</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>연락처</h3>
+                    <p>BigHit Music</p>
+                    <p>서울특별시 용산구</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BigHit Music. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
