@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script type="module" src="{{ url_for('static', filename='js/dist/main.js') }}" defer></script>
 </head>
 <body>
     <div id="three-container"></div>
@@ -47,7 +47,10 @@
         <section id="members" class="members-section">
             <div class="container">
                 <h2 class="section-title">멤버</h2>
-                <div id="members-content" class="members-grid">
+                <div id="members-content" class="members-grid"
+                     hx-get="/api/members"
+                     hx-trigger="load"
+                     hx-target="this">
                     <div class="loading">멤버 정보를 불러오는 중...</div>
                 </div>
             </div>

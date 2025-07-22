@@ -1,14 +1,18 @@
 import os
+from typing import Optional, Dict, List, Any, Union
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import json
-import os
 from datetime import datetime
+import logging
 
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class BTSWebsiteApp:
     def __init__(self):
@@ -23,35 +27,39 @@ class BTSWebsiteApp:
     def setup_security_headers(self):
         @self.app.after_request
         def add_security_headers(response):
-            response.headers['Content-Security-Policy'] = (
-                "default-src 'self'; "
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; "
-                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-                "font-src 'self' https://fonts.gstatic.com; "
-                "img-src 'self' data: https:; "
-                "media-src 'self' https:; "
-                "connect-src 'self' https:; "
-                "frame-src 'self' https://www.youtube.com https://youtube.com;"
-            )
-            response.headers['X-Content-Type-Options'] = 'nosniff'
-            response.headers['X-Frame-Options'] = 'DENY'
-            response.headers['X-XSS-Protection'] = '1; mode=block'
-            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-            response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+            try:
+                if hasattr(response, 'headers') and response.headers is not None:
+                    response.headers['Content-Security-Policy'] = (
+                        "default-src 'self'; "
+                        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; "
+                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                        "font-src 'self' https://fonts.gstatic.com; "
+                        "img-src 'self' data: https:; "
+                        "media-src 'self' https:; "
+                        "connect-src 'self' https:; "
+                        "frame-src 'self' https://www.youtube.com https://youtube.com;"
+                    )
+                    response.headers['X-Content-Type-Options'] = 'nosniff'
+                    response.headers['X-Frame-Options'] = 'DENY'
+                    response.headers['X-XSS-Protection'] = '1; mode=block'
+                    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+                    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+            except (TypeError, AttributeError, KeyError) as e:
+                logging.warning(f"Error setting security headers: {e}")
             return response
     
     def setup_database(self):
         try:
             self.db_connection = psycopg2.connect(
-                host=os.getenv('DB_HOST', 'localhost'),
-                database=os.getenv('DB_NAME', 'bts_website'),
-                user=os.getenv('DB_USER', 'postgres'),
-                password=os.getenv('DB_PASSWORD', 'password'),
-                port=os.getenv('DB_PORT', '5432')
+                host=os.getenv('DB_HOST') or 'localhost',
+                database=os.getenv('DB_NAME') or 'bts_website',
+                user=os.getenv('DB_USER') or 'bts_user',
+                password=os.getenv('DB_PASSWORD') or 'bts_password',
+                port=int(os.getenv('DB_PORT') or '5432')
             )
             self.create_tables()
-        except psycopg2.Error as e:
-            print(f"Database connection error: {e}")
+        except (psycopg2.Error, TypeError, AttributeError) as e:
+            logging.error(f"Database connection error: {e}")
             self.db_connection = None
     
     def create_tables(self):
@@ -97,7 +105,6 @@ class BTSWebsiteApp:
             )
         ''')
         
-        cursor.execute('CREATE EXTENSION IF NOT EXISTS pgai CASCADE;')
         
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS ai_recommendations (
@@ -120,39 +127,41 @@ class BTSWebsiteApp:
         cursor = self.db_connection.cursor()
         
         cursor.execute("SELECT COUNT(*) FROM bts_members")
-        if cursor.fetchone()[0] == 0:
+        result = cursor.fetchone()
+        if result and len(result) > 0 and result[0] == 0:
             members_data = [
                 ('김남준', 'RM', '리더, 래퍼', '1994-09-12', 'BTS의 리더이자 메인 래퍼입니다.', 
-                 ['/static/images/rm_1.jpg', '/static/images/rm_2.jpg', '/static/images/rm_3.jpg'],
-                 {'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'}),
+                 json.dumps(['/static/images/rm_1.jpg', '/static/images/rm_2.jpg', '/static/images/rm_3.jpg']),
+                 json.dumps({'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'})),
                 ('김석진', 'Jin', '보컬, 비주얼', '1992-12-04', 'BTS의 보컬이자 비주얼을 담당합니다.',
-                 ['/static/images/jin_1.jpg', '/static/images/jin_2.jpg', '/static/images/jin_3.jpg'],
-                 {'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'}),
+                 json.dumps(['/static/images/jin_1.jpg', '/static/images/jin_2.jpg', '/static/images/jin_3.jpg']),
+                 json.dumps({'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'})),
                 ('민윤기', 'Suga', '래퍼, 프로듀서', '1993-03-09', 'BTS의 래퍼이자 프로듀서입니다.',
-                 ['/static/images/suga_1.jpg', '/static/images/suga_2.jpg', '/static/images/suga_3.jpg'],
-                 {'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'}),
+                 json.dumps(['/static/images/suga_1.jpg', '/static/images/suga_2.jpg', '/static/images/suga_3.jpg']),
+                 json.dumps({'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'})),
                 ('정호석', 'J-Hope', '래퍼, 댄서', '1994-02-18', 'BTS의 래퍼이자 메인 댄서입니다.',
-                 ['/static/images/jhope_1.jpg', '/static/images/jhope_2.jpg', '/static/images/jhope_3.jpg'],
-                 {'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'}),
+                 json.dumps(['/static/images/jhope_1.jpg', '/static/images/jhope_2.jpg', '/static/images/jhope_3.jpg']),
+                 json.dumps({'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'})),
                 ('박지민', 'Jimin', '보컬, 댄서', '1995-10-13', 'BTS의 보컬이자 리드 댄서입니다.',
-                 ['/static/images/jimin_1.jpg', '/static/images/jimin_2.jpg', '/static/images/jimin_3.jpg'],
-                 {'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'}),
+                 json.dumps(['/static/images/jimin_1.jpg', '/static/images/jimin_2.jpg', '/static/images/jimin_3.jpg']),
+                 json.dumps({'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'})),
                 ('김태형', 'V', '보컬, 비주얼', '1995-12-30', 'BTS의 보컬이자 비주얼을 담당합니다.',
-                 ['/static/images/v_1.jpg', '/static/images/v_2.jpg', '/static/images/v_3.jpg'],
-                 {'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'}),
+                 json.dumps(['/static/images/v_1.jpg', '/static/images/v_2.jpg', '/static/images/v_3.jpg']),
+                 json.dumps({'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'})),
                 ('전정국', 'Jungkook', '메인 보컬, 센터', '1997-09-01', 'BTS의 메인 보컬이자 센터입니다.',
-                 ['/static/images/jungkook_1.jpg', '/static/images/jungkook_2.jpg', '/static/images/jungkook_3.jpg'],
-                 {'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'})
+                 json.dumps(['/static/images/jungkook_1.jpg', '/static/images/jungkook_2.jpg', '/static/images/jungkook_3.jpg']),
+                 json.dumps({'twitter': '@BTS_twt', 'instagram': '@bts.bighitofficial', 'weverse': 'BTS Official'}))
             ]
             
             for member in members_data:
                 cursor.execute('''
                     INSERT INTO bts_members (name_korean, name_english, position, birth_date, description_korean, image_urls, social_media_links)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s::json, %s::json)
                 ''', member)
         
         cursor.execute("SELECT COUNT(*) FROM songs")
-        if cursor.fetchone()[0] == 0:
+        result = cursor.fetchone()
+        if result and len(result) > 0 and result[0] == 0:
             songs_data = [
                 ('다이너마이트', 'Dynamite', 'BE', '2020-08-21', '코스 아이 아이 아이 샤인 스루 더 시티...', '/static/audio/dynamite.mp3', 'https://www.youtube.com/watch?v=gdZLi9oWNZg'),
                 ('버터', 'Butter', 'Butter', '2021-05-21', '스무스 라이크 버터...', '/static/audio/butter.mp3', 'https://www.youtube.com/watch?v=WMweEpGlu_U'),
@@ -165,6 +174,22 @@ class BTSWebsiteApp:
                     INSERT INTO songs (title_korean, title_english, album, release_date, lyrics_korean, audio_url, video_url)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 ''', song)
+        
+        cursor.execute("SELECT COUNT(*) FROM albums")
+        result = cursor.fetchone()
+        if result and len(result) > 0 and result[0] == 0:
+            albums_data = [
+                ('BE', 'BE', '2020-11-20', 'BTS의 다섯 번째 한국어 정규 앨범', '/static/images/be_album.jpg'),
+                ('Map of the Soul: 7', 'Map of the Soul: 7', '2020-02-21', 'BTS의 네 번째 한국어 정규 앨범', '/static/images/mots7_album.jpg'),
+                ('Love Yourself: Answer', 'Love Yourself: Answer', '2018-08-24', 'Love Yourself 시리즈의 완결편', '/static/images/answer_album.jpg'),
+                ('You Never Walk Alone', 'You Never Walk Alone', '2017-02-13', 'Wings의 리패키지 앨범', '/static/images/ynwa_album.jpg')
+            ]
+            
+            for album in albums_data:
+                cursor.execute('''
+                    INSERT INTO albums (title_korean, title_english, release_date, description_korean, cover_image_url)
+                    VALUES (%s, %s, %s, %s, %s)
+                ''', album)
         
         self.db_connection.commit()
         cursor.close()
@@ -184,7 +209,11 @@ class BTSWebsiteApp:
             members = cursor.fetchall()
             cursor.close()
             
-            return jsonify([dict(member) for member in members])
+            try:
+                return jsonify([dict(member) for member in members if member])
+            except (TypeError, ValueError) as e:
+                logging.error(f"Error serializing members data: {e}")
+                return jsonify({'error': 'Data serialization failed'}), 500
         
         @self.app.route('/api/songs')
         def get_songs():
@@ -196,7 +225,11 @@ class BTSWebsiteApp:
             songs = cursor.fetchall()
             cursor.close()
             
-            return jsonify([dict(song) for song in songs])
+            try:
+                return jsonify([dict(song) for song in songs if song])
+            except (TypeError, ValueError) as e:
+                logging.error(f"Error serializing songs data: {e}")
+                return jsonify({'error': 'Data serialization failed'}), 500
         
         @self.app.route('/api/albums')
         def get_albums():
@@ -208,7 +241,11 @@ class BTSWebsiteApp:
             albums = cursor.fetchall()
             cursor.close()
             
-            return jsonify([dict(album) for album in albums])
+            try:
+                return jsonify([dict(album) for album in albums if album])
+            except (TypeError, ValueError) as e:
+                logging.error(f"Error serializing albums data: {e}")
+                return jsonify({'error': 'Data serialization failed'}), 500
         
         @self.app.route('/api/recommendations', methods=['GET', 'POST'])
         def get_recommendations():
@@ -217,10 +254,21 @@ class BTSWebsiteApp:
             
             preferences = ''
             if request.method == 'POST':
-                data = request.get_json()
-                preferences = data.get('preferences', '')
+                try:
+                    data = request.get_json()
+                    if data and isinstance(data, dict) and 'preferences' in data:
+                        preferences = data['preferences']
+                    else:
+                        preferences = ''
+                except (TypeError, ValueError, KeyError) as e:
+                    logging.warning(f"Error parsing POST data: {e}")
+                    preferences = ''
             else:
-                preferences = request.args.get('preferences', '')
+                try:
+                    preferences = request.args.get('preferences', '') or ''
+                except (TypeError, AttributeError) as e:
+                    logging.warning(f"Error accessing request args: {e}")
+                    preferences = ''
             
             cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
             
@@ -245,18 +293,36 @@ class BTSWebsiteApp:
             
             recommendations = cursor.fetchall()
             
-            recommended_songs = [song['title_korean'] for song in recommendations]
+            recommended_songs = []
+            if recommendations:
+                for song in recommendations:
+                    try:
+                        if isinstance(song, dict) and 'title_korean' in song:
+                            recommended_songs.append(song['title_korean'])
+                        elif hasattr(song, 'title_korean'):
+                            recommended_songs.append(song.title_korean)
+                    except (KeyError, AttributeError, TypeError) as e:
+                        logging.warning(f"Error accessing song title: {e}")
+                        continue
+            
             reason = f"Based on preferences: {preferences}" if preferences else "Popular BTS songs"
             
-            cursor.execute("""
-                INSERT INTO ai_recommendations (user_preferences, recommended_songs, recommendation_reason)
-                VALUES (%s, %s, %s)
-            """, (preferences, recommended_songs, reason))
+            try:
+                cursor.execute("""
+                    INSERT INTO ai_recommendations (user_preferences, recommended_songs, recommendation_reason)
+                    VALUES (%s, %s, %s)
+                """, (preferences, recommended_songs, reason))
+            except (psycopg2.Error, TypeError) as e:
+                logging.error(f"Error inserting recommendations: {e}")
             
             self.db_connection.commit()
             cursor.close()
             
-            return jsonify([dict(song) for song in recommendations])
+            try:
+                return jsonify([dict(song) for song in recommendations if song])
+            except (TypeError, ValueError) as e:
+                logging.error(f"Error serializing recommendations data: {e}")
+                return jsonify({'error': 'Data serialization failed'}), 500
         
         @self.app.route('/privacy')
         def privacy():
