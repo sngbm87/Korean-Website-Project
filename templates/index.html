@@ -123,6 +123,70 @@
                     </article>
                 </div>
             </div>
+        <section id="videos" class="section">
+            <div class="container">
+                <h2 class="section-title">비디오</h2>
+                <div class="video-hero">
+                    <div class="featured-video">
+                        <iframe src="https://www.youtube.com/embed/gdZLi9oWNZg?autoplay=1&mute=1&loop=1&playlist=gdZLi9oWNZg" 
+                                frameborder="0" 
+                                allowfullscreen 
+                                allow="autoplay; encrypted-media"
+                                class="responsive-video"></iframe>
+                        <div class="video-overlay">
+                            <h3>Dynamite - Official MV</h3>
+                            <p>BTS의 첫 번째 영어 싱글로 빌보드 핫 100 1위를 차지한 역사적인 곡</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-grid">
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <iframe src="https://www.youtube.com/embed/WMweEpGlu_U" 
+                                    frameborder="0" 
+                                    allowfullscreen
+                                    class="responsive-video"></iframe>
+                            <div class="play-button">▶</div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Butter</h3>
+                            <p>부드럽고 달콤한 여름 댄스 팝 곡</p>
+                            <span class="video-stats">조회수 800M+</span>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <iframe src="https://www.youtube.com/embed/CuklIb9d3fI" 
+                                    frameborder="0" 
+                                    allowfullscreen
+                                    class="responsive-video"></iframe>
+                            <div class="play-button">▶</div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Permission to Dance</h3>
+                            <p>희망과 기쁨을 전하는 업비트 팝 곡</p>
+                            <span class="video-stats">조회수 500M+</span>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <iframe src="https://www.youtube.com/embed/xEeFrLSkMm8" 
+                                    frameborder="0" 
+                                    allowfullscreen
+                                    class="responsive-video"></iframe>
+                            <div class="play-button">▶</div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Spring Day</h3>
+                            <p>그리움과 희망을 담은 감성적인 발라드</p>
+                            <span class="video-stats">조회수 300M+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
         </section>
     </main>
 
@@ -130,26 +194,43 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>방탄소년단</h3>
-                    <p>전 세계를 하나로 만드는 음악</p>
+                    <h3>소셜 미디어</h3>
+                    <div class="social-links">
+                        <a href="https://twitter.com/BTS_twt" target="_blank" rel="noopener noreferrer" class="social-link twitter">Twitter</a>
+                        <a href="https://www.instagram.com/bts.bighitofficial/" target="_blank" rel="noopener noreferrer" class="social-link instagram">Instagram</a>
+                        <a href="https://www.youtube.com/c/BANGTANTV" target="_blank" rel="noopener noreferrer" class="social-link youtube">YouTube</a>
+                        <a href="https://weverse.io/bts" target="_blank" rel="noopener noreferrer" class="social-link weverse">Weverse</a>
+                        <a href="https://www.tiktok.com/@bts_official_bighit" target="_blank" rel="noopener noreferrer" class="social-link tiktok">TikTok</a>
+                    </div>
                 </div>
                 <div class="footer-section">
-                    <h3>링크</h3>
-                    <ul>
-                        <li><a href="#">공식 유튜브</a></li>
-                        <li><a href="#">트위터</a></li>
-                        <li><a href="#">인스타그램</a></li>
-                        <li><a href="#">위버스</a></li>
-                    </ul>
+                    <h3>한국 플랫폼</h3>
+                    <div class="korean-links">
+                        <a href="https://cafe.naver.com/bangtan" target="_blank" rel="noopener noreferrer" class="korean-link naver">NAVER 카페</a>
+                        <a href="https://www.melon.com/artist/timeline.htm?artistId=261143" target="_blank" rel="noopener noreferrer" class="korean-link melon">멜론</a>
+                        <a href="https://www.genie.co.kr/detail/artistInfo?xxartistId=80270" target="_blank" rel="noopener noreferrer" class="korean-link genie">지니뮤직</a>
+                        <a href="https://www.visitkorea.or.kr/kto_en/main.kto" target="_blank" rel="noopener noreferrer" class="korean-link tourism">한국관광공사</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>법적 정보</h3>
+                    <div class="legal-links">
+                        <a href="{{ url_for('privacy') }}">개인정보처리방침</a>
+                        <a href="{{ url_for('terms') }}">이용약관</a>
+                        <a href="{{ url_for('disclaimer') }}">면책조항</a>
+                        <a href="{{ url_for('copyright') }}">저작권 정책</a>
+                    </div>
                 </div>
                 <div class="footer-section">
                     <h3>연락처</h3>
                     <p>BigHit Music</p>
-                    <p>서울특별시 용산구</p>
+                    <p>서울특별시 용산구 한강대로 42길 16</p>
+                    <p>전화: 02-3444-0105</p>
+                    <p>이메일: info@bighitmusic.co.kr</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 BigHit Music. All rights reserved.</p>
+                <p>&copy; 2025 BigHit Music. All rights reserved. | BTS 공식 웹사이트</p>
             </div>
         </div>
     </footer>
