@@ -11,12 +11,11 @@ COPY requirements-production.txt .
 RUN pip install --no-cache-dir -r requirements-production.txt \
     && pip cache purge
 
-# Copy only essential files for production
+# Copy ONLY essential production files (minimal package)
 COPY backend/app.py ./backend/
 COPY static/css/style.css ./static/css/
 COPY static/js/main.js ./static/js/
-COPY static/images/*.jpg ./static/images/
-COPY templates/*.html ./templates/
+COPY templates/index.html ./templates/
 
 EXPOSE 8080
 
@@ -24,6 +23,12 @@ ENV FLASK_APP=backend/app.py
 ENV FLASK_ENV=production
 ENV PORT=8080
 ENV PYTHONPATH=/app
+ENV DB_HOST=postgres
+ENV DB_NAME=bts_website
+ENV DB_USER=bts_user
+ENV DB_PASSWORD=bts_secure_kr_website_2025_prod_deployment_db
+ENV DB_PORT=5432
+ENV SECRET_KEY=bts_kr_website_enterprise_secure_secret_key_2025_production
 
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser

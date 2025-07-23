@@ -1,25 +1,15 @@
-# AGGRESSIVE DEPLOYMENT OPTIMIZATION - Exclude ALL large files
+# ULTRA-AGGRESSIVE DEPLOYMENT OPTIMIZATION - MINIMAL PRODUCTION BUILD
+# Exclude ALL unnecessary files for production deployment
+
+# LARGEST FILES - MUST EXCLUDE
 node_modules/
 backend/venv/
 backend/__pycache__/
-
-# ALL MEDIA FILES (use CDN URLs in production)
+static/js/dist/
 static/audio/
 static/videos/
-*.mp3
-*.mp4
-*.mov
-*.avi
-*.mkv
-*.flv
-*.webm
 
-# ALL BUILD ARTIFACTS AND DEVELOPMENT FILES
-static/js/dist/
-*.min.js
-*.map
-dist/
-build/
+# ALL DEVELOPMENT AND BUILD FILES
 .git/
 .gitignore
 *.md
@@ -34,24 +24,40 @@ package.json
 pyproject.toml
 requirements.txt
 docker-compose.yml
-
-# ALL ENVIRONMENT AND CONFIG FILES
-.env*
-backend/.env*
-
-# ALL IDE, OS, AND CACHE FILES
-.vscode/
-.idea/
-*.swp
-*.swo
-.DS_Store
-Thumbs.db
+*.sql
 *.log
 *.tmp
 *.temp
 *.bak
 *.backup
 *~
+
+# ALL MEDIA AND BINARY FILES
+*.mp3
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.flv
+*.webm
+*.wav
+*.ogg
+*.pdf
+*.zip
+*.tar
+*.gz
+
+# ALL CONFIG AND ENVIRONMENT FILES
+.env*
+backend/.env*
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ALL PACKAGE MANAGER FILES
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
@@ -63,8 +69,14 @@ __pycache__/
 *.tsbuildinfo
 .cache/
 
-# EXCLUDE DOCUMENTATION AND SQL FILES
-*.sql
+# ALL BUILD ARTIFACTS
+*.min.js
+*.map
+dist/
+build/
+static/js/main.min.js
+
+# EXCLUDE ALL DOCUMENTATION
 FAANG_*.md
 CYBERSECURITY_*.md
 CODE_QUALITY_*.md
