@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTS - 방탄소년단 공식 웹사이트</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-{{ csp_nonce }}' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self'; connect-src 'self'; font-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/error.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script type="module" src="{{ url_for('static', filename='js/dist/main.js') }}" defer></script>
+</head>
+<body>
+    <div id="three-container"></div>
+    
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/bts-logo.png') }}" alt="BTS 로고" class="logo">
+                <h1>방탄소년단</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">홈</a></li>
+                <li><a href="#members" class="nav-link">멤버</a></li>
+                <li><a href="#music" class="nav-link">음악</a></li>
+                <li><a href="#albums" class="nav-link">앨범</a></li>
+                <li><a href="#news" class="nav-link">뉴스</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <h2 class="hero-title">방탄소년단</h2>
+                <p class="hero-subtitle">전 세계를 사로잡은 K-POP의 아이콘</p>
+                <button class="cta-button" hx-get="/api/members" hx-target="#members-content" hx-trigger="click">
+                    멤버 보기
+                </button>
+            </div>
+            <div class="hero-video">
+                <video autoplay muted loop>
+                    <source src="{{ url_for('static', filename='videos/bts-hero.mp4') }}" type="video/mp4">
+                </video>
+            </div>
+        </section>
+
+        <section id="members" class="members-section">
+            <div class="container">
+                <h2 class="section-title">멤버</h2>
+                <div id="members-content" class="members-grid"
+                     hx-get="/api/members"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="loading">멤버 정보를 불러오는 중...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="music" class="music-section">
+            <div class="container">
+                <h2 class="section-title">음악</h2>
+                <div class="music-player">
+                    <div class="current-song">
+                        <img id="current-album-art" src="{{ url_for('static', filename='images/default-album.jpg') }}" alt="앨범 아트">
+                        <div class="song-info">
+                            <h3 id="current-song-title">곡을 선택해주세요</h3>
+                            <p id="current-artist">BTS</p>
+                        </div>
+                    </div>
+                    <div class="player-controls">
+                        <button id="prev-btn" class="control-btn">⏮</button>
+                        <button id="play-btn" class="control-btn play">▶</button>
+                        <button id="next-btn" class="control-btn">⏭</button>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                        <div class="time-info">
+                            <span id="current-time">0:00</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                    </div>
+                    <audio id="audio-player"></audio>
+                </div>
+                <div id="songs-content" class="songs-grid" 
+                     hx-get="/api/songs" 
+                     hx-trigger="load" 
+                     hx-target="this">
+                    <div class="loading">음악을 불러오는 중...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="albums" class="albums-section">
+            <div class="container">
+                <h2 class="section-title">앨범</h2>
+                <div id="albums-content" class="albums-grid"
+                     hx-get="/api/albums"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="loading">앨범을 불러오는 중...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="news" class="news-section">
+            <div class="container">
+                <h2 class="section-title">최신 뉴스</h2>
+                <div class="news-grid">
+                    <article class="news-item">
+                        <img src="{{ url_for('static', filename='images/news1.jpg') }}" alt="뉴스 이미지">
+                        <div class="news-content">
+                            <h3>BTS, 새로운 앨범 발표 예정</h3>
+                            <p>방탄소년단이 새로운 앨범으로 팬들과 만날 예정입니다...</p>
+                            <time>2024년 1월 15일</time>
+                        </div>
+                    </article>
+                    <article class="news-item">
+                        <img src="{{ url_for('static', filename='images/news2.jpg') }}" alt="뉴스 이미지">
+                        <div class="news-content">
+                            <h3>월드 투어 일정 공개</h3>
+                            <p>전 세계 팬들이 기다려온 월드 투어 일정이 공개되었습니다...</p>
+                            <time>2024년 1월 10일</time>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        <section id="videos" class="section">
+            <div class="container">
+                <h2 class="section-title">비디오</h2>
+                <div class="video-hero">
+                    <div class="featured-video">
+                        <iframe src="https://www.youtube.com/embed/gdZLi9oWNZg?autoplay=1&mute=1&loop=1&playlist=gdZLi9oWNZg" 
+                                frameborder="0" 
+                                allowfullscreen 
+                                allow="autoplay; encrypted-media"
+                                class="responsive-video"></iframe>
+                        <div class="video-overlay">
+                            <h3>Dynamite - Official MV</h3>
+                            <p>BTS의 첫 번째 영어 싱글로 빌보드 핫 100 1위를 차지한 역사적인 곡</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-grid">
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <iframe src="https://www.youtube.com/embed/WMweEpGlu_U" 
+                                    frameborder="0" 
+                                    allowfullscreen
+                                    class="responsive-video"></iframe>
+                            <div class="play-button">▶</div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Butter</h3>
+                            <p>부드럽고 달콤한 여름 댄스 팝 곡</p>
+                            <span class="video-stats">조회수 800M+</span>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <iframe src="https://www.youtube.com/embed/CuklIb9d3fI" 
+                                    frameborder="0" 
+                                    allowfullscreen
+                                    class="responsive-video"></iframe>
+                            <div class="play-button">▶</div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Permission to Dance</h3>
+                            <p>희망과 기쁨을 전하는 업비트 팝 곡</p>
+                            <span class="video-stats">조회수 500M+</span>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <iframe src="https://www.youtube.com/embed/xEeFrLSkMm8" 
+                                    frameborder="0" 
+                                    allowfullscreen
+                                    class="responsive-video"></iframe>
+                            <div class="play-button">▶</div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Spring Day</h3>
+                            <p>그리움과 희망을 담은 감성적인 발라드</p>
+                            <span class="video-stats">조회수 300M+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>소셜 미디어</h3>
+                    <div class="social-links">
+                        <a href="https://twitter.com/BTS_twt" target="_blank" rel="noopener noreferrer" class="social-link twitter">Twitter</a>
+                        <a href="https://www.instagram.com/bts.bighitofficial/" target="_blank" rel="noopener noreferrer" class="social-link instagram">Instagram</a>
+                        <a href="https://www.youtube.com/c/BANGTANTV" target="_blank" rel="noopener noreferrer" class="social-link youtube">YouTube</a>
+                        <a href="https://weverse.io/bts" target="_blank" rel="noopener noreferrer" class="social-link weverse">Weverse</a>
+                        <a href="https://www.tiktok.com/@bts_official_bighit" target="_blank" rel="noopener noreferrer" class="social-link tiktok">TikTok</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>한국 플랫폼</h3>
+                    <div class="korean-links">
+                        <a href="https://cafe.naver.com/bangtan" target="_blank" rel="noopener noreferrer" class="korean-link naver">NAVER 카페</a>
+                        <a href="https://www.melon.com/artist/timeline.htm?artistId=261143" target="_blank" rel="noopener noreferrer" class="korean-link melon">멜론</a>
+                        <a href="https://www.genie.co.kr/detail/artistInfo?xxartistId=80270" target="_blank" rel="noopener noreferrer" class="korean-link genie">지니뮤직</a>
+                        <a href="https://www.visitkorea.or.kr/kto_en/main.kto" target="_blank" rel="noopener noreferrer" class="korean-link tourism">한국관광공사</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>법적 정보</h3>
+                    <div class="legal-links">
+                        <a href="{{ url_for('privacy') }}">개인정보처리방침</a>
+                        <a href="{{ url_for('terms') }}">이용약관</a>
+                        <a href="{{ url_for('disclaimer') }}">면책조항</a>
+                        <a href="{{ url_for('copyright') }}">저작권 정책</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>연락처</h3>
+                    <p>BigHit Music</p>
+                    <p>서울특별시 용산구 한강대로 42길 16</p>
+                    <p>전화: 02-3444-0105</p>
+                    <p>이메일: info@bighitmusic.co.kr</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 BigHit Music. All rights reserved. | BTS 공식 웹사이트</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
