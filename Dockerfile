@@ -11,11 +11,12 @@ COPY requirements-production.txt .
 RUN pip install --no-cache-dir -r requirements-production.txt \
     && pip cache purge
 
+# Copy only essential files for production
 COPY backend/app.py ./backend/
-COPY static/css/ ./static/css/
+COPY static/css/style.css ./static/css/
 COPY static/js/main.js ./static/js/
-COPY static/images/ ./static/images/
-COPY templates/ ./templates/
+COPY static/images/*.jpg ./static/images/
+COPY templates/*.html ./templates/
 
 EXPOSE 8080
 
