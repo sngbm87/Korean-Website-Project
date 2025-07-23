@@ -11,8 +11,10 @@ COPY requirements-production.txt .
 RUN pip install --no-cache-dir -r requirements-production.txt \
     && pip cache purge
 
-COPY backend/ ./backend/
-COPY static/ ./static/
+COPY backend/app.py ./backend/
+COPY static/css/ ./static/css/
+COPY static/js/main.js ./static/js/
+COPY static/images/ ./static/images/
 COPY templates/ ./templates/
 
 EXPOSE 8080
@@ -20,6 +22,7 @@ EXPOSE 8080
 ENV FLASK_APP=backend/app.py
 ENV FLASK_ENV=production
 ENV PORT=8080
+ENV PYTHONPATH=/app
 
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser

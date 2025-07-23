@@ -1,9 +1,5 @@
-# Node modules (244MB - exclude from deployment)
+# DEPLOYMENT OPTIMIZATION - Exclude large files (244MB+ reduction)
 node_modules/
-
-# Python virtual environment
-venv/
-env/
 backend/venv/
 backend/__pycache__/
 
@@ -15,66 +11,61 @@ backend/__pycache__/
 .env.production.local
 backend/.env
 
-# Build outputs
+# Build outputs and compiled files
 static/js/dist/
 *.min.js
 *.map
 dist/
 build/
 
-# Database
+# Large audio/video files (use CDN in production)
+static/audio/
+static/videos/
+
+# Database files
 *.db
 *.sqlite
 
-# Logs
+# Logs and runtime data
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 logs/
-
-# Runtime data
 pids
 *.pid
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
+# Development and testing
 coverage/
 .pytest_cache/
 .coverage
 .nyc_output/
+test/
+tests/
+spec/
+__tests__/
+test_db_connection.py
 
-# IDE
+# IDE and OS files
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
 .DS_Store
 Thumbs.db
 
-# TypeScript
+# TypeScript and cache
 *.tsbuildinfo
-
-# Cache
 .cache/
 __pycache__/
 *.pyc
 *.pyo
 
-# Temporary files
+# Temporary and backup files
 *.tmp
 *.temp
-
-# Large media files (optimize for deployment)
-*.mov
-*.avi
-*.mkv
-*.flv
-
-# Backup files
 *.bak
 *.backup
 *~
@@ -90,13 +81,9 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
-# Test files (exclude from production)
-test/
-tests/
-spec/
-__tests__/
-test_db_connection.py
-
-# Documentation build
+# Documentation
 docs/_build/
 site/
+README.md
+*.md
+!requirements-production.txt

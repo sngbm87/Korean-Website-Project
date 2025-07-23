@@ -1,0 +1,62 @@
+# Exclude large files from Docker build context
+node_modules/
+backend/venv/
+backend/__pycache__/
+
+# Development files
+.git/
+.gitignore
+*.md
+README.md
+docs/
+test/
+tests/
+spec/
+__tests__/
+
+# Large media files (use CDN)
+static/audio/
+static/videos/
+
+# Build artifacts
+static/js/dist/
+*.min.js
+*.map
+dist/
+build/
+
+# Environment and config files
+.env*
+backend/.env*
+
+# IDE and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+
+# TypeScript
+*.tsbuildinfo
+.cache/

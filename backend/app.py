@@ -202,10 +202,10 @@ class BTSWebsiteApp:
         result = cursor.fetchone()
         if result and len(result) > 0 and result[0] == 0:
             songs_data = [
-                ('다이너마이트', 'Dynamite', 'BE', '2020-08-21', '코스 아이 아이 아이 샤인 스루 더 시티...', '/static/audio/dynamite.mp3', 'https://www.youtube.com/watch?v=gdZLi9oWNZg'),
-                ('버터', 'Butter', 'Butter', '2021-05-21', '스무스 라이크 버터...', '/static/audio/butter.mp3', 'https://www.youtube.com/watch?v=WMweEpGlu_U'),
-                ('퍼미션 투 댄스', 'Permission to Dance', 'Butter', '2021-07-09', '잇츠 더 사우트 오브 뮤직...', '/static/audio/permission_to_dance.mp3', 'https://www.youtube.com/watch?v=CuklIb9d3fI'),
-                ('봄날', 'Spring Day', 'You Never Walk Alone', '2017-02-13', '보고 싶다 이렇게 말하니까 더 보고 싶다...', '/static/audio/spring_day.mp3', 'https://www.youtube.com/watch?v=xEeFrLSkMm8')
+                ('다이너마이트', 'Dynamite', 'BE', '2020-08-21', '코스 아이 아이 아이 샤인 스루 더 시티...', 'https://cdn.example.com/audio/dynamite.mp3', 'https://www.youtube.com/watch?v=gdZLi9oWNZg'),
+                ('버터', 'Butter', 'Butter', '2021-05-21', '스무스 라이크 버터...', 'https://cdn.example.com/audio/butter.mp3', 'https://www.youtube.com/watch?v=WMweEpGlu_U'),
+                ('퍼미션 투 댄스', 'Permission to Dance', 'Butter', '2021-07-09', '잇츠 더 사우트 오브 뮤직...', 'https://cdn.example.com/audio/permission_to_dance.mp3', 'https://www.youtube.com/watch?v=CuklIb9d3fI'),
+                ('봄날', 'Spring Day', 'You Never Walk Alone', '2017-02-13', '보고 싶다 이렇게 말하니까 더 보고 싶다...', 'https://cdn.example.com/audio/spring_day.mp3', 'https://www.youtube.com/watch?v=xEeFrLSkMm8')
             ]
             
             for song in songs_data:
@@ -394,8 +394,8 @@ class BTSWebsiteApp:
         def copyright():
             return render_template('copyright.html')
     
-    def run(self, debug=True):
-        port = int(os.getenv('PORT', 5000))
+    def run(self, debug=False):
+        port = int(os.getenv('PORT', 8080))
         self.app.run(debug=debug, host='0.0.0.0', port=port)
 
 if __name__ == '__main__':
