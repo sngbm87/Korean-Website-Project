@@ -57,10 +57,11 @@ class BTSWebsiteApp:
         def add_security_headers(response):
             try:
                 if hasattr(response, 'headers') and response.headers is not None:
+                    nonce = secrets.token_urlsafe(16)
                     response.headers['Content-Security-Policy'] = (
                         "default-src 'self'; "
-                        "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; "
-                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                        f"script-src 'self' 'nonce-{nonce}' https://unpkg.com https://cdn.jsdelivr.net; "
+                        f"style-src 'self' 'nonce-{nonce}' https://fonts.googleapis.com; "
                         "font-src 'self' https://fonts.gstatic.com; "
                         "img-src 'self' data: https:; "
                         "media-src 'self' https:; "
@@ -68,15 +69,20 @@ class BTSWebsiteApp:
                         "frame-src 'self' https://www.youtube.com https://youtube.com; "
                         "object-src 'none'; "
                         "base-uri 'self'; "
-                        "form-action 'self'"
+                        "form-action 'self'; "
+                        "upgrade-insecure-requests; "
+                        "block-all-mixed-content"
                     )
                     response.headers['X-Content-Type-Options'] = 'nosniff'
                     response.headers['X-Frame-Options'] = 'DENY'
                     response.headers['X-XSS-Protection'] = '1; mode=block'
-                    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
+                    response.headers['Strict-Transport-Security'] = 'max-age=63072000; includeSubDomains; preload'
                     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-                    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+                    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=(), payment=(), usb=()'
                     response.headers['X-Permitted-Cross-Domain-Policies'] = 'none'
+                    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+                    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+                    response.headers['Cross-Origin-Resource-Policy'] = 'same-origin'
             except (TypeError, AttributeError, KeyError) as e:
                 logging.warning(f"Error setting security headers: {e}")
             return response
@@ -238,15 +244,30 @@ class BTSWebsiteApp:
                 return jsonify({'error': 'Database connection failed'}), 500
             
             cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
-            cursor.execute('SELECT * FROM bts_members ORDER BY id')
+            cursor.execute('SELECT * FROM bts_members ORDER BY id LIMIT 10')
             members = cursor.fetchall()
             cursor.close()
             
             try:
-                return jsonify([dict(member) for member in members if member])
+                result = []
+                for member in members:
+                    if member:
+                        member_dict = dict(member)
+                        if isinstance(member_dict.get('images'), str):
+                            try:
+                                member_dict['images'] = json.loads(member_dict['images'])
+                            except json.JSONDecodeError:
+                                member_dict['images'] = []
+                        if isinstance(member_dict.get('social_media'), str):
+                            try:
+                                member_dict['social_media'] = json.loads(member_dict['social_media'])
+                            except json.JSONDecodeError:
+                                member_dict['social_media'] = {}
+                        result.append(member_dict)
+                return jsonify(result)
             except (TypeError, ValueError) as e:
                 logging.error(f"Error serializing members data: {e}")
-                return jsonify({'error': 'Data serialization failed'}), 500
+                return jsonify({'error': 'Internal server error'}), 500
         
         @self.app.route('/api/songs')
         def get_songs():
@@ -254,7 +275,7 @@ class BTSWebsiteApp:
                 return jsonify({'error': 'Database connection failed'}), 500
             
             cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
-            cursor.execute('SELECT * FROM songs ORDER BY release_date DESC')
+            cursor.execute('SELECT * FROM songs ORDER BY release_date DESC LIMIT 20')
             songs = cursor.fetchall()
             cursor.close()
             
@@ -262,7 +283,7 @@ class BTSWebsiteApp:
                 return jsonify([dict(song) for song in songs if song])
             except (TypeError, ValueError) as e:
                 logging.error(f"Error serializing songs data: {e}")
-                return jsonify({'error': 'Data serialization failed'}), 500
+                return jsonify({'error': 'Internal server error'}), 500
         
         @self.app.route('/api/albums')
         def get_albums():
@@ -270,7 +291,7 @@ class BTSWebsiteApp:
                 return jsonify({'error': 'Database connection failed'}), 500
             
             cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
-            cursor.execute('SELECT * FROM albums ORDER BY release_date DESC')
+            cursor.execute('SELECT * FROM albums ORDER BY release_date DESC LIMIT 15')
             albums = cursor.fetchall()
             cursor.close()
             
@@ -278,7 +299,7 @@ class BTSWebsiteApp:
                 return jsonify([dict(album) for album in albums if album])
             except (TypeError, ValueError) as e:
                 logging.error(f"Error serializing albums data: {e}")
-                return jsonify({'error': 'Data serialization failed'}), 500
+                return jsonify({'error': 'Internal server error'}), 500
         
         @self.app.route('/api/recommendations', methods=['GET', 'POST'])
         def get_recommendations():
@@ -355,7 +376,7 @@ class BTSWebsiteApp:
                 return jsonify([dict(song) for song in recommendations if song])
             except (TypeError, ValueError) as e:
                 logging.error(f"Error serializing recommendations data: {e}")
-                return jsonify({'error': 'Data serialization failed'}), 500
+                return jsonify({'error': 'Internal server error'}), 500
         
         @self.app.route('/privacy')
         def privacy():
@@ -374,7 +395,8 @@ class BTSWebsiteApp:
             return render_template('copyright.html')
     
     def run(self, debug=True):
-        self.app.run(debug=debug, host='0.0.0.0', port=5000)
+        port = int(os.getenv('PORT', 5000))
+        self.app.run(debug=debug, host='0.0.0.0', port=port)
 
 if __name__ == '__main__':
     bts_app = BTSWebsiteApp()

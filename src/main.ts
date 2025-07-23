@@ -26,9 +26,10 @@
  * @since 2025-01-22
  */
 
-import * as THREE from 'three';
 
 declare const htmx: any;
+
+declare const THREE: any;
 
 /**
  * Song data structure representing BTS tracks
@@ -96,11 +97,11 @@ interface Album {
  * - Factory pattern for Three.js object creation
  */
 class BTSWebsite {
-    private scene: THREE.Scene | null = null;
-    private camera: THREE.PerspectiveCamera | null = null;
-    private renderer: THREE.WebGLRenderer | null = null;
-    private particles: THREE.Points | null = null;
-    private floatingShapes: THREE.Mesh<THREE.BufferGeometry, THREE.Material>[] = [];
+    private scene: any = null;
+    private camera: any = null;
+    private renderer: any = null;
+    private particles: any = null;
+    private floatingShapes: any[] = [];
     private audioPlayer: HTMLAudioElement | null = null;
     private currentSongIndex: number = 0;
     private songs: Song[] = [];
@@ -129,7 +130,12 @@ class BTSWebsite {
         
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        this.renderer = new THREE.WebGLRenderer({ 
+            alpha: true, 
+            antialias: true,
+            powerPreference: "high-performance",
+            failIfMajorPerformanceCaveat: false
+        });
         
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x000000, 0);
@@ -145,20 +151,26 @@ class BTSWebsite {
     }
     
     createParticles() {
-        const particleCount = 200;
+        const particleCount = 30;
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
         
+        const randomValues = new Float32Array(particleCount * 6);
+        for (let i = 0; i < particleCount * 6; i++) {
+            randomValues[i] = Math.random();
+        }
+        
         for (let i = 0; i < particleCount; i++) {
             const i3 = i * 3;
+            const i6 = i * 6;
             
-            positions[i3] = (Math.random() - 0.5) * 20;
-            positions[i3 + 1] = (Math.random() - 0.5) * 20;
-            positions[i3 + 2] = (Math.random() - 0.5) * 20;
+            positions[i3] = (randomValues[i6] - 0.5) * 20;
+            positions[i3 + 1] = (randomValues[i6 + 1] - 0.5) * 20;
+            positions[i3 + 2] = (randomValues[i6 + 2] - 0.5) * 20;
             
             const color = new THREE.Color();
-            color.setHSL(Math.random() * 0.3 + 0.7, 0.8, 0.6);
+            color.setHSL(randomValues[i6 + 3] * 0.3 + 0.7, 0.8, 0.6);
             colors[i3] = color.r;
             colors[i3 + 1] = color.g;
             colors[i3 + 2] = color.b;
@@ -172,7 +184,8 @@ class BTSWebsite {
             vertexColors: true,
             transparent: true,
             opacity: 0.8,
-            blending: THREE.AdditiveBlending
+            blending: THREE.AdditiveBlending,
+            sizeAttenuation: false
         });
         
         this.particles = new THREE.Points(geometry, material);
@@ -243,7 +256,7 @@ class BTSWebsite {
             });
         }
         
-        if (this.renderer && this.scene && this.camera) {
+        if (this.renderer && this.scene && this.camera && !document.hidden) {
             this.renderer.render(this.scene, this.camera);
         }
     }
