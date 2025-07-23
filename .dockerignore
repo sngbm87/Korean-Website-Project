@@ -1,17 +1,16 @@
-# ULTRA-AGGRESSIVE DEPLOYMENT OPTIMIZATION - MINIMAL PRODUCTION BUILD
-# Exclude ALL unnecessary files for production deployment
+# EXTREME DEPLOYMENT OPTIMIZATION - ABSOLUTE MINIMAL BUILD
+# Exclude EVERYTHING except essential production files
 
-# LARGEST FILES - MUST EXCLUDE
+# EXCLUDE ALL LARGE DIRECTORIES
 node_modules/
 backend/venv/
 backend/__pycache__/
 static/js/dist/
 static/audio/
 static/videos/
-
-# ALL DEVELOPMENT AND BUILD FILES
 .git/
-.gitignore
+
+# EXCLUDE ALL DEVELOPMENT FILES
 *.md
 README.md
 docs/
@@ -23,16 +22,24 @@ tsconfig.json
 package.json
 pyproject.toml
 requirements.txt
+requirements-production.txt
 docker-compose.yml
+fly.toml
+.gitignore
+
+# EXCLUDE ALL SQL AND CONFIG FILES
 *.sql
+FAANG_*.sql
 *.log
 *.tmp
 *.temp
 *.bak
 *.backup
 *~
+.env*
+backend/.env*
 
-# ALL MEDIA AND BINARY FILES
+# EXCLUDE ALL MEDIA FILES
 *.mp3
 *.mp4
 *.mov
@@ -47,9 +54,7 @@ docker-compose.yml
 *.tar
 *.gz
 
-# ALL CONFIG AND ENVIRONMENT FILES
-.env*
-backend/.env*
+# EXCLUDE ALL IDE AND OS FILES
 .vscode/
 .idea/
 *.swp
@@ -57,7 +62,7 @@ backend/.env*
 .DS_Store
 Thumbs.db
 
-# ALL PACKAGE MANAGER FILES
+# EXCLUDE ALL PACKAGE MANAGER FILES
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
@@ -69,7 +74,7 @@ __pycache__/
 *.tsbuildinfo
 .cache/
 
-# ALL BUILD ARTIFACTS
+# EXCLUDE ALL BUILD ARTIFACTS
 *.min.js
 *.map
 dist/
@@ -83,3 +88,4 @@ CODE_QUALITY_*.md
 DEPLOYMENT_*.md
 FINAL_*.md
 SECURITY.md
+CODE_QUALITY.md
