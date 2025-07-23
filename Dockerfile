@@ -7,11 +7,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-COPY requirements-production.txt .
-RUN pip install --no-cache-dir -r requirements-production.txt \
+COPY requirements-minimal.txt .
+RUN pip install --no-cache-dir -r requirements-minimal.txt \
     && pip cache purge
 
-# Copy ONLY essential production files (minimal package)
+# Copy ONLY essential production files (ultra-minimal package)
 COPY backend/app.py ./backend/
 COPY static/css/style.css ./static/css/
 COPY static/js/main.js ./static/js/
