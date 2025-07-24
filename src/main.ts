@@ -26,7 +26,7 @@
  * @since 2025-01-22
  */
 
-import * as THREE from 'three';
+declare const THREE: any;
 
 declare const htmx: any;
 
@@ -80,6 +80,38 @@ interface Album {
 }
 
 /**
+ * Korean Color Palette interface for cultural design elements
+ */
+interface KoreanColorPalette {
+    red: string;
+    blue: string;
+    gold: string;
+    pink: string;
+    green: string;
+    white: string;
+    black: string;
+}
+
+/**
+ * Device breakpoints for responsive design
+ */
+interface DeviceBreakpoints {
+    mobile: number;
+    tablet: number;
+    laptop: number;
+    desktop: number;
+}
+
+/**
+ * Performance metrics for monitoring
+ */
+interface PerformanceMetrics {
+    fps: number;
+    frameTime: number;
+    memoryUsage: number;
+}
+
+/**
  * Main BTS Website Class
  * 
  * Implements a comprehensive K-pop website with:
@@ -96,23 +128,145 @@ interface Album {
  * - Factory pattern for Three.js object creation
  */
 class BTSWebsite {
-    private scene: THREE.Scene | null = null;
-    private camera: THREE.PerspectiveCamera | null = null;
-    private renderer: THREE.WebGLRenderer | null = null;
-    private particles: THREE.Points | null = null;
-    private floatingShapes: THREE.Mesh<THREE.BufferGeometry, THREE.Material>[] = [];
+    private scene: any = null;
+    private camera: any = null;
+    private renderer: any = null;
+    private particles: any = null;
+    private floatingShapes: any[] = [];
     private audioPlayer: HTMLAudioElement | null = null;
     private currentSongIndex: number = 0;
     private songs: Song[] = [];
     private isPlaying: boolean = false;
     private currentMemberImageIndex: { [key: number]: number } = {};
+    private animationId: number | null = null;
+    
+    private koreanColors: KoreanColorPalette = {
+        red: '#c8102e',
+        blue: '#003478',
+        gold: '#ffd700',
+        pink: '#ff69b4',
+        green: '#32cd32',
+        white: '#ffffff',
+        black: '#000000'
+    };
+    
+    private deviceBreakpoints: DeviceBreakpoints = {
+        mobile: 768,
+        tablet: 1024,
+        laptop: 1440,
+        desktop: 1920
+    };
+    
+    private performanceMetrics: PerformanceMetrics = {
+        fps: 0,
+        frameTime: 0,
+        memoryUsage: 0
+    };
+    
+    private isReducedMotion: boolean = false;
+    private deviceType: string = 'desktop';
+    private lastFrameTime: number = 0;
 
     /**
      * Initialize the BTS website with all components
      * Sets up 3D graphics, audio player, and event handlers
      */
     constructor() {
+        this.detectDeviceType();
+        this.checkReducedMotionPreference();
         this.init();
+        this.setupAccessibility();
+        this.setupPerformanceMonitoring();
+        
+        console.log(`Enhanced BTS Website initialized with Three.js background for ${this.deviceType} device`);
+    }
+    
+    private detectDeviceType(): void {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const isPortrait = height > width;
+        
+        if (width <= this.deviceBreakpoints.mobile) {
+            this.deviceType = 'mobile';
+        } else if (width <= this.deviceBreakpoints.tablet) {
+            this.deviceType = isPortrait ? 'tablet-portrait' : 'tablet-landscape';
+        } else if (width <= this.deviceBreakpoints.laptop) {
+            this.deviceType = 'laptop';
+        } else {
+            this.deviceType = 'desktop';
+        }
+        
+        if (isPortrait && height > 1200) {
+            this.deviceType = 'vertical-monitor';
+        }
+    }
+    
+    private checkReducedMotionPreference(): void {
+        this.isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+    
+    private setupAccessibility(): void {
+        const container = document.getElementById('three-container');
+        if (container) {
+            container.setAttribute('aria-hidden', 'true');
+            container.setAttribute('role', 'presentation');
+        }
+        
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                this.pauseAnimations();
+            }
+        });
+    }
+    
+    private setupPerformanceMonitoring(): void {
+        let frameCount = 0;
+        let lastTime = performance.now();
+        
+        const updateMetrics = () => {
+            const currentTime = performance.now();
+            frameCount++;
+            
+            if (currentTime - lastTime >= 1000) {
+                this.performanceMetrics.fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                this.performanceMetrics.frameTime = (currentTime - lastTime) / frameCount;
+                
+                if ((performance as any).memory) {
+                    this.performanceMetrics.memoryUsage = (performance as any).memory.usedJSHeapSize / 1048576;
+                }
+                
+                frameCount = 0;
+                lastTime = currentTime;
+                
+                if (this.performanceMetrics.fps < 30) {
+                    this.optimizeForLowPerformance();
+                }
+            }
+            
+            requestAnimationFrame(updateMetrics);
+        };
+        
+        updateMetrics();
+    }
+    
+    private optimizeForLowPerformance(): void {
+        if (this.particles && this.particles.geometry) {
+            const positions = this.particles.geometry.attributes.position.array;
+            if (positions.length > 3000) {
+                const reducedPositions = new Float32Array(3000);
+                for (let i = 0; i < 3000; i++) {
+                    reducedPositions[i] = positions[i];
+                }
+                this.particles.geometry.setAttribute('position', new (THREE as any).BufferAttribute(reducedPositions, 3));
+            }
+        }
+    }
+    
+    private pauseAnimations(): void {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
     }
     
     init() {
@@ -127,9 +281,9 @@ class BTSWebsite {
         const container = document.getElementById('three-container');
         if (!container) return;
         
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        this.scene = new (THREE as any).Scene();
+        this.camera = new (THREE as any).PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.renderer = new (THREE as any).WebGLRenderer({ alpha: true, antialias: true });
         
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x000000, 0);
@@ -146,7 +300,7 @@ class BTSWebsite {
     
     createParticles() {
         const particleCount = 200;
-        const geometry = new THREE.BufferGeometry();
+        const geometry = new (THREE as any).BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
         
@@ -157,46 +311,46 @@ class BTSWebsite {
             positions[i3 + 1] = (Math.random() - 0.5) * 20;
             positions[i3 + 2] = (Math.random() - 0.5) * 20;
             
-            const color = new THREE.Color();
+            const color = new (THREE as any).Color();
             color.setHSL(Math.random() * 0.3 + 0.7, 0.8, 0.6);
             colors[i3] = color.r;
             colors[i3 + 1] = color.g;
             colors[i3 + 2] = color.b;
         }
         
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        geometry.setAttribute('position', new (THREE as any).BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new (THREE as any).BufferAttribute(colors, 3));
         
-        const material = new THREE.PointsMaterial({
+        const material = new (THREE as any).PointsMaterial({
             size: 0.05,
             vertexColors: true,
             transparent: true,
             opacity: 0.8,
-            blending: THREE.AdditiveBlending
+            blending: (THREE as any).AdditiveBlending
         });
         
-        this.particles = new THREE.Points(geometry, material);
+        this.particles = new (THREE as any).Points(geometry, material);
         this.scene?.add(this.particles);
     }
     
     createFloatingShapes() {
         const shapes = [];
         const geometries = [
-            new THREE.BoxGeometry(0.2, 0.2, 0.2),
-            new THREE.SphereGeometry(0.1, 8, 6),
-            new THREE.ConeGeometry(0.1, 0.3, 6)
+            new (THREE as any).BoxGeometry(0.2, 0.2, 0.2),
+            new (THREE as any).SphereGeometry(0.1, 8, 6),
+            new (THREE as any).ConeGeometry(0.1, 0.3, 6)
         ];
         
         for (let i = 0; i < 20; i++) {
             const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = new THREE.MeshBasicMaterial({
-                color: new THREE.Color().setHSL(Math.random() * 0.3 + 0.7, 0.8, 0.6),
+            const material = new (THREE as any).MeshBasicMaterial({
+                color: new (THREE as any).Color().setHSL(Math.random() * 0.3 + 0.7, 0.8, 0.6),
                 transparent: true,
                 opacity: 0.3,
                 wireframe: true
             });
             
-            const mesh = new THREE.Mesh(geometry, material);
+            const mesh = new (THREE as any).Mesh(geometry, material);
             mesh.position.set(
                 (Math.random() - 0.5) * 10,
                 (Math.random() - 0.5) * 10,
@@ -408,6 +562,8 @@ class BTSWebsite {
                 this.handleMembersLoaded(event.detail.xhr.response);
             } else if (event.detail?.target?.id === 'songs-content') {
                 this.handleSongsLoaded(event.detail.xhr.response);
+            } else if (event.detail?.target?.id === 'albums-content') {
+                this.handleAlbumsLoaded(event.detail.xhr.response);
             }
         });
         
@@ -757,7 +913,7 @@ class BTSWebsite {
     }
     
     debounce(func: Function, wait: number): Function {
-        let timeout: NodeJS.Timeout;
+        let timeout: any;
         return function executedFunction(...args: any[]) {
             const later = () => {
                 clearTimeout(timeout);

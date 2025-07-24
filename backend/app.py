@@ -235,7 +235,135 @@ class BTSWebsiteApp:
         @self.app.route('/api/members')
         def get_members():
             if not self.db_connection:
-                return jsonify({'error': 'Database connection failed'}), 500
+                mock_members = [
+                    {
+                        "id": 1,
+                        "name_korean": "김남준",
+                        "name_english": "RM",
+                        "position": "Leader, Main Rapper",
+                        "birth_date": "1994-09-12",
+                        "description_korean": "BTS의 리더이자 메인 래퍼로, 뛰어난 작사 실력과 리더십을 보여줍니다.",
+                        "image_urls": [
+                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
+                        ],
+                        "social_media_links": {
+                            "twitter": "https://twitter.com/BTS_twt",
+                            "instagram": "https://instagram.com/bts.bighitofficial",
+                            "weverse": "https://weverse.io/bts"
+                        }
+                    },
+                    {
+                        "id": 2,
+                        "name_korean": "김석진",
+                        "name_english": "Jin",
+                        "position": "Vocalist, Visual",
+                        "birth_date": "1992-12-04",
+                        "description_korean": "BTS의 보컬이자 비주얼을 담당하며, 따뜻한 목소리와 유머로 팬들을 사로잡습니다.",
+                        "image_urls": [
+                            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face"
+                        ],
+                        "social_media_links": {
+                            "twitter": "https://twitter.com/BTS_twt",
+                            "instagram": "https://instagram.com/bts.bighitofficial",
+                            "weverse": "https://weverse.io/bts"
+                        }
+                    },
+                    {
+                        "id": 3,
+                        "name_korean": "민윤기",
+                        "name_english": "Suga",
+                        "position": "Lead Rapper, Producer",
+                        "birth_date": "1993-03-09",
+                        "description_korean": "BTS의 리드 래퍼이자 프로듀서로, 깊이 있는 가사와 음악적 재능을 선보입니다.",
+                        "image_urls": [
+                            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
+                        ],
+                        "social_media_links": {
+                            "twitter": "https://twitter.com/BTS_twt",
+                            "instagram": "https://instagram.com/bts.bighitofficial",
+                            "weverse": "https://weverse.io/bts"
+                        }
+                    },
+                    {
+                        "id": 4,
+                        "name_korean": "정호석",
+                        "name_english": "J-Hope",
+                        "position": "Main Dancer, Sub Rapper",
+                        "birth_date": "1994-02-18",
+                        "description_korean": "BTS의 메인 댄서이자 서브 래퍼로, 밝은 에너지와 뛰어난 댄스 실력을 자랑합니다.",
+                        "image_urls": [
+                            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face"
+                        ],
+                        "social_media_links": {
+                            "twitter": "https://twitter.com/BTS_twt",
+                            "instagram": "https://instagram.com/bts.bighitofficial",
+                            "weverse": "https://weverse.io/bts"
+                        }
+                    },
+                    {
+                        "id": 5,
+                        "name_korean": "박지민",
+                        "name_english": "Jimin",
+                        "position": "Main Dancer, Lead Vocalist",
+                        "birth_date": "1995-10-13",
+                        "description_korean": "BTS의 메인 댄서이자 리드 보컬로, 감성적인 목소리와 우아한 춤으로 사랑받습니다.",
+                        "image_urls": [
+                            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
+                        ],
+                        "social_media_links": {
+                            "twitter": "https://twitter.com/BTS_twt",
+                            "instagram": "https://instagram.com/bts.bighitofficial",
+                            "weverse": "https://weverse.io/bts"
+                        }
+                    },
+                    {
+                        "id": 6,
+                        "name_korean": "김태형",
+                        "name_english": "V",
+                        "position": "Lead Dancer, Sub Vocalist",
+                        "birth_date": "1995-12-30",
+                        "description_korean": "BTS의 리드 댄서이자 서브 보컬로, 독특한 매력과 깊은 목소리를 가지고 있습니다.",
+                        "image_urls": [
+                            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face"
+                        ],
+                        "social_media_links": {
+                            "twitter": "https://twitter.com/BTS_twt",
+                            "instagram": "https://instagram.com/bts.bighitofficial",
+                            "weverse": "https://weverse.io/bts"
+                        }
+                    },
+                    {
+                        "id": 7,
+                        "name_korean": "전정국",
+                        "name_english": "Jungkook",
+                        "position": "Main Vocalist, Lead Dancer, Sub Rapper, Maknae",
+                        "birth_date": "1997-09-01",
+                        "description_korean": "BTS의 메인 보컬이자 막내로, 다재다능한 실력과 청량한 목소리로 팬들의 사랑을 받습니다.",
+                        "image_urls": [
+                            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+                            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
+                        ],
+                        "social_media_links": {
+                            "twitter": "https://twitter.com/BTS_twt",
+                            "instagram": "https://instagram.com/bts.bighitofficial",
+                            "weverse": "https://weverse.io/bts"
+                        }
+                    }
+                ]
+                return jsonify(mock_members)
             
             cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
             cursor.execute('SELECT * FROM bts_members ORDER BY id')
@@ -251,7 +379,59 @@ class BTSWebsiteApp:
         @self.app.route('/api/songs')
         def get_songs():
             if not self.db_connection:
-                return jsonify({'error': 'Database connection failed'}), 500
+                mock_songs = [
+                    {
+                        "id": 1,
+                        "title_korean": "다이너마이트",
+                        "title_english": "Dynamite",
+                        "album": "BE",
+                        "release_date": "2020-08-21",
+                        "lyrics_korean": "코스 아이 아이 아이 아임 인 더 스타즈 투나잇\n소 와치 미 브링 더 파이어 앤 셋 더 나잇 얼라이트",
+                        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+                        "video_url": "https://www.youtube.com/watch?v=gdZLi9oWNZg"
+                    },
+                    {
+                        "id": 2,
+                        "title_korean": "버터",
+                        "title_english": "Butter",
+                        "album": "Butter",
+                        "release_date": "2021-05-21",
+                        "lyrics_korean": "스무스 라이크 버터\n라이크 어 크리미널 언더커버",
+                        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+                        "video_url": "https://www.youtube.com/watch?v=WMweEpGlu_U"
+                    },
+                    {
+                        "id": 3,
+                        "title_korean": "퍼미션 투 댄스",
+                        "title_english": "Permission to Dance",
+                        "album": "Butter",
+                        "release_date": "2021-07-09",
+                        "lyrics_korean": "잇츠 더 사우트 오브 파이어\n버닝 업 더 나잇",
+                        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+                        "video_url": "https://www.youtube.com/watch?v=CuklIb9d3fI"
+                    },
+                    {
+                        "id": 4,
+                        "title_korean": "봄날",
+                        "title_english": "Spring Day",
+                        "album": "You Never Walk Alone",
+                        "release_date": "2017-02-13",
+                        "lyrics_korean": "보고 싶다\n이런 말 하니까 더 보고 싶다",
+                        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+                        "video_url": "https://www.youtube.com/watch?v=xEeFrLSkMm8"
+                    },
+                    {
+                        "id": 5,
+                        "title_korean": "페이크 러브",
+                        "title_english": "Fake Love",
+                        "album": "Love Yourself: Tear",
+                        "release_date": "2018-05-18",
+                        "lyrics_korean": "러브 유 소 배드 러브 유 소 배드\n몰라도 되는 걸 알고 싶었어",
+                        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+                        "video_url": "https://www.youtube.com/watch?v=7C2z4GqqS5E"
+                    }
+                ]
+                return jsonify(mock_songs)
             
             cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
             cursor.execute('SELECT * FROM songs ORDER BY release_date DESC')
@@ -267,7 +447,49 @@ class BTSWebsiteApp:
         @self.app.route('/api/albums')
         def get_albums():
             if not self.db_connection:
-                return jsonify({'error': 'Database connection failed'}), 500
+                mock_albums = [
+                    {
+                        "id": 1,
+                        "title_korean": "BE",
+                        "title_english": "BE",
+                        "release_date": "2020-11-20",
+                        "description_korean": "팬데믹 시대에 만들어진 BTS의 진솔한 이야기를 담은 앨범",
+                        "cover_image_url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop"
+                    },
+                    {
+                        "id": 2,
+                        "title_korean": "맵 오브 더 소울: 7",
+                        "title_english": "Map of the Soul: 7",
+                        "release_date": "2020-02-21",
+                        "description_korean": "BTS의 7년간의 여정과 성장을 담은 대표작",
+                        "cover_image_url": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=400&fit=crop"
+                    },
+                    {
+                        "id": 3,
+                        "title_korean": "러브 유어셀프: 앤서",
+                        "title_english": "Love Yourself: Answer",
+                        "release_date": "2018-08-24",
+                        "description_korean": "자신을 사랑하는 방법에 대한 BTS만의 해답",
+                        "cover_image_url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop"
+                    },
+                    {
+                        "id": 4,
+                        "title_korean": "러브 유어셀프: 티어",
+                        "title_english": "Love Yourself: Tear",
+                        "release_date": "2018-05-18",
+                        "description_korean": "사랑의 아픔과 성장을 그린 감성적인 앨범",
+                        "cover_image_url": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=400&fit=crop"
+                    },
+                    {
+                        "id": 5,
+                        "title_korean": "러브 유어셀프: 허",
+                        "title_english": "Love Yourself: Her",
+                        "release_date": "2017-09-18",
+                        "description_korean": "사랑의 시작을 그린 밝고 희망찬 앨범",
+                        "cover_image_url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop"
+                    }
+                ]
+                return jsonify(mock_albums)
             
             cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
             cursor.execute('SELECT * FROM albums ORDER BY release_date DESC')
@@ -333,7 +555,7 @@ class BTSWebsiteApp:
                         if isinstance(song, dict) and 'title_korean' in song:
                             recommended_songs.append(song['title_korean'])
                         elif hasattr(song, 'title_korean'):
-                            recommended_songs.append(song.title_korean)
+                            recommended_songs.append(str(song.get('title_korean', 'Unknown')))
                     except (KeyError, AttributeError, TypeError) as e:
                         logging.warning(f"Error accessing song title: {e}")
                         continue
