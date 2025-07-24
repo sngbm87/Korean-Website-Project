@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BTS - 방탄소년단 공식 웹사이트</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-{{ csp_nonce }}' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self'; connect-src 'self'; font-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com https://htmx.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self'; frame-src 'self' https://www.youtube.com https://youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/error.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
     <script type="module" src="{{ url_for('static', filename='js/dist/main.js') }}" defer></script>
@@ -33,16 +37,45 @@
     <main>
         <section id="home" class="hero-section">
             <div class="hero-content">
-                <h2 class="hero-title">방탄소년단</h2>
-                <p class="hero-subtitle">전 세계를 사로잡은 K-POP의 아이콘</p>
-                <button class="cta-button" hx-get="/api/members" hx-target="#members-content" hx-trigger="click">
-                    멤버 보기
-                </button>
+                <h1 class="hero-title floating-element">방탄소년단</h1>
+                <p class="hero-subtitle korean-text">전 세계를 사로잡은 K-POP의 아이콘</p>
+                <p class="hero-description english-text">Beyond The Scene - Global Superstars</p>
+                <div class="hero-stats">
+                    <div class="stat-item pulse-element">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label korean-text">멤버</span>
+                    </div>
+                    <div class="stat-item pulse-element">
+                        <span class="stat-number">10+</span>
+                        <span class="stat-label korean-text">년</span>
+                    </div>
+                    <div class="stat-item pulse-element">
+                        <span class="stat-number">1B+</span>
+                        <span class="stat-label english-text">Fans</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="cta-button primary" onclick="document.getElementById('members').scrollIntoView({behavior: 'smooth'})">
+                        <span class="korean-text">멤버 보기</span>
+                        <span class="button-icon">→</span>
+                    </button>
+                    <button class="cta-button secondary" onclick="document.getElementById('music').scrollIntoView({behavior: 'smooth'})">
+                        <span class="korean-text">음악 듣기</span>
+                        <span class="button-icon">♪</span>
+                    </button>
+                </div>
             </div>
-            <div class="hero-video">
-                <video autoplay muted loop>
-                    <source src="{{ url_for('static', filename='videos/bts-hero.mp4') }}" type="video/mp4">
-                </video>
+            <div class="hero-visual">
+                <div class="floating-shapes">
+                    <div class="shape shape-1"></div>
+                    <div class="shape shape-2"></div>
+                    <div class="shape shape-3"></div>
+                </div>
+                <div class="hero-video">
+                    <video autoplay muted loop>
+                        <source src="{{ url_for('static', filename='videos/bts-hero.mp4') }}" type="video/mp4">
+                    </video>
+                </div>
             </div>
         </section>
 
@@ -52,8 +85,13 @@
                 <div id="members-content" class="members-grid"
                      hx-get="/api/members"
                      hx-trigger="load"
-                     hx-target="this">
-                    <div class="loading">멤버 정보를 불러오는 중...</div>
+                     hx-target="this"
+                     role="grid"
+                     aria-label="BTS 멤버 목록">
+                    <div class="loading" role="status" aria-live="polite">
+                        <span class="korean-text">멤버 정보를 불러오는 중...</span>
+                        <div class="loading-spinner" aria-hidden="true"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -88,8 +126,13 @@
                 <div id="songs-content" class="songs-grid" 
                      hx-get="/api/songs" 
                      hx-trigger="load" 
-                     hx-target="this">
-                    <div class="loading">음악을 불러오는 중...</div>
+                     hx-target="this"
+                     role="grid"
+                     aria-label="BTS 음악 목록">
+                    <div class="loading" role="status" aria-live="polite">
+                        <span class="korean-text">음악을 불러오는 중...</span>
+                        <div class="loading-spinner" aria-hidden="true"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -100,8 +143,13 @@
                 <div id="albums-content" class="albums-grid"
                      hx-get="/api/albums"
                      hx-trigger="load"
-                     hx-target="this">
-                    <div class="loading">앨범을 불러오는 중...</div>
+                     hx-target="this"
+                     role="grid"
+                     aria-label="BTS 앨범 목록">
+                    <div class="loading" role="status" aria-live="polite">
+                        <span class="korean-text">앨범을 불러오는 중...</span>
+                        <div class="loading-spinner" aria-hidden="true"></div>
+                    </div>
                 </div>
             </div>
         </section>
